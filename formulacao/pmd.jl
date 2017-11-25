@@ -3,28 +3,71 @@
 using JuMP
 using GLPKMathProgInterface
 
-#instância de exemplo
-n = 5
-g = 3
+filename = "instancias/teste"
 
-pv = [1, 2, 3, 4, 5]
-vx = [50, 0, 23, 55, 103]
-vy = [-25, 0, 27, 28, 2]
-M = [5, 4, 6]
+file = open(filename)
+lines = readlines(file);
 
-da = Array{Float64,2}(n,n);
-for i = 1:n
-	for j = (i+1):n
-		dx = vx[i] - vx[j]
-		dy = vy[i] - vy[j]
-		da[i, j] = sqrt(dx*dx + dy*dy)
-		da[j, i] = sqrt(dx*dx + dy*dy)
-	end
+n=0
+g=0
+pv=0
+vx=0
+vy=0
+M=0
+
+for (number, content) in enumerate(lines)
+    
+    # Lê o número de vértices e o número de grupos.
+    if number == 1
+        (n, g) = split(content)
+        n = parse(Int64, n)
+        g = parse(Int64, g)
+
+        pv = Array{Float64, 1}(n)
+        vx = Array{Float64, 1}(n)
+        vy = Array{Float64, 1}(n)
+        M = Array{Float64, 1}(g)
+    end
+    
+    # Lê os pesos e coordenadas dos vértices.
+    if number > 1 && number < n + 2
+        (p, x, y) = split(content)
+        p = parse(Float64, p)
+        x = parse(Float64, x)
+        y = parse(Float64, y)
+        
+        pv[number - 1] = p
+        vx[number - 1] = x
+        vy[number - 1] = y
+    
+        
+    end
+    
+    # Lê os pesos alvos dos grupos.
+    if number >= n + 2 && number <= n + g + 1
+        M[number - n - 1] = parse(Float64, content);
+    end
 end
 
-H = 100
+println("leitura do arquivo concluida");
 
-#modelo e variaveis do problema
+da = Array{Float64,2}(n,n);
+H = 0;
+for i = 1:n
+    for j = (i+1):n
+        dx = vx[i] - vx[j]
+        dy = vy[i] - vy[j]
+        da[i, j] = sqrt(dx*dx + dy*dy)
+        da[j, i] = sqrt(dx*dx + dy*dy)
+        if H < da[i, j]
+            H = da[i,j]
+        end
+    end
+end
+
+println("calculos de distancias concluidos");
+
+# Modelo e variaveis do problema
 m = Model(solver = GLPKSolverMIP())
 
 alpha = 0.05
@@ -32,10 +75,10 @@ alpha = 0.05
 @variable(m, minD[1:g] >= 0)
 @variable(m, x[1:n, 1:g], Bin)
 
-#funcao objetivo
+# Funcao objetivo
 @objective(m, Max, sum(minD[1:g]))
 
-#restricoes
+# Restricoes
 for v = 1:n
 	for u = v+1:n
         	for i = 1:g
@@ -53,11 +96,14 @@ for k = 1:g
 		end)
 end
 
+println("construcao do modelo concluida");
+println(m)
 
+# Resolver problema
 
 solve(m)
 
-#mostrar resultados
+# Mostrar resultados
 for i = 1:g
     println("peso alvo do grupo $(i) = $(M[i])")
     println("peso total dos vertices do grupo $(i) = $(sum(getvalue(x[v,i])*pv[v] for v in 1:n))")
