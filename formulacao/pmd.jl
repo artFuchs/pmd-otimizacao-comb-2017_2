@@ -10,6 +10,7 @@ g = 3
 pv = [1, 2, 3, 4, 5]
 vx = [50, 0, 23, 55, 103]
 vy = [-25, 0, 27, 28, 2]
+M = [5, 4, 6]
 
 da = Array{Float64,2}(n,n);
 for i = 1:n
@@ -29,7 +30,6 @@ m = Model(solver = GLPKSolverMIP())
 alpha = 0.05
 
 @variable(m, minD[1:g] >= 0)
-@variable(m, M[1:g] >= 0)
 @variable(m, x[1:n, 1:g], Bin)
 
 #funcao objetivo
@@ -39,24 +39,31 @@ alpha = 0.05
 for v = 1:n
 	for u = v+1:n
         	for i = 1:g
-            		@constraint(m, minD[i] <= da[u,v] + (2-(x[v,i]+x[u,i])*H))
+            	@constraint(m, minD[i] <= da[u,v] + (2-(x[v,i]+x[u,i]))*H)
 	        end
 	end
 
-	@constraint(m, sum(x[v,k] for k in 1:g) <= 1)
+	@constraint(m, sum(x[v,k] for k in 1:g) == 1)
 end
 
 for k = 1:g
 	@constraints(m, begin
-		sum(x[v,k]*pv[v] for v in 1:n) >= (1-alpha)*M[k]
-		sum(x[v,k]*pv[v] for v in 1:n) <= (1+alpha)*M[k]
+		(1-alpha)*M[k] <= sum(x[v,k]*pv[v] for v in 1:n)
+        	sum(x[v,k]*pv[v] for v in 1:n) <= (1+alpha)*M[k]
 		end)
 end
 
-#print(m)
 
-#resolução do problema
+
 solve(m)
+
+#mostrar resultados
+for i = 1:g
+    println("peso alvo do grupo $(i) = $(M[i])")
+    println("peso total dos vertices do grupo $(i) = $(sum(getvalue(x[v,i])*pv[v] for v in 1:n))")
+    println("distância minima dos vertices do grupo $(i) = $(getvalue(minD[i]))")
+    println("vertices: $(getvalue(x[1:n, i]))")
+end
 
 
 

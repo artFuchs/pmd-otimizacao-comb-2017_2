@@ -4,5 +4,5 @@ O objetivo desse trabalho é formular e resolver o problema da partição mais d
 
 ![formulacao atual](/formulacao/formulacao_pmd.png)
 
-##Deadlines
+## Deadlines
 29/11 - apresentar formulação e proposta.
