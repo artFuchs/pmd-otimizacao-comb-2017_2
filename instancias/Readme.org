@@ -1,0 +1,33 @@
+#+Title: Instâncias problema PMD
+#+Author: Marcus Ritt
+#+Date: <2017-11-13 Seg>
+
+* Formato
+
+  - Primeira linha: n g
+    onde
+    - n :: número de vértices
+    - g :: número de grupos
+  - Próximas n linhas: p x y
+    onde
+    - p :: peso do vértice
+    - x,y :: coordenadas do vértice
+  - Últimas g linhas: M
+    onde
+    - M :: peso alvo do grupo
+
+A tolerância alpha=0.05.
+
+Os grafos são completos, i.e. existe uma aresta entre todo par de vértices. A distância entre vértices
+u e v é a distância Euclidiana definido por
+   #+BEGIN_QUOTE
+   dx = u.x-v.x
+   dy = u.y-v.y
+   distance = sqrt(dx*dx+dy*dy)
+   #+END_QUOTE
+
+% Local Variables:
+% auto-fill-function: do-auto-fill
+% ispell-local-dictionary: "english"
+% fill-column: 150
+% End:
