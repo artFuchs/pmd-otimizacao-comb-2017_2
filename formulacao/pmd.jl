@@ -73,6 +73,7 @@ m = Model(solver = GLPKSolverMIP())
 alpha = 0.05
 
 @variable(m, minD[1:g] >= 0)
+@variable(m, c[1:g], Bin)
 @variable(m, x[1:n, 1:g], Bin)
 
 # Funcao objetivo
@@ -91,8 +92,11 @@ end
 
 for k = 1:g
 	@constraints(m, begin
+		minD[k] <= c[k]*H
 		(1-alpha)*M[k] <= sum(x[v,k]*pv[v] for v in 1:n)
         	sum(x[v,k]*pv[v] for v in 1:n) <= (1+alpha)*M[k]
+	        c[k] >= sum(x[v,k] for v in 1:n)/n
+        	c[k] <= sum(x[v,k] for v in 1:n)*1
 		end)
 end
 
