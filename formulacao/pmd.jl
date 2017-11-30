@@ -3,7 +3,8 @@
 using JuMP
 using GLPKMathProgInterface
 
-filename = "instancias/teste"
+filename = "../instancias/300-5-0.75-1"
+#filename = "teste"
 
 file = open(filename)
 lines = readlines(file);
@@ -68,7 +69,7 @@ end
 println("calculos de distancias concluidos");
 
 # Modelo e variaveis do problema
-m = Model(solver = GLPKSolverMIP())
+m = Model(solver = GLPKSolverMIP(tm_lim=3600000))
 
 alpha = 0.05
 
@@ -101,18 +102,26 @@ for k = 1:g
 end
 
 println("construcao do modelo concluida");
-println(m)
+#println(m)
 
 # Resolver problema
-
+@time begin
 solve(m)
+end
 
 # Mostrar resultados
+println("");
 for i = 1:g
     println("peso alvo do grupo $(i) = $(M[i])")
     println("peso total dos vertices do grupo $(i) = $(sum(getvalue(x[v,i])*pv[v] for v in 1:n))")
-    println("distância minima dos vertices do grupo $(i) = $(getvalue(minD[i]))")
-    println("vertices: $(getvalue(x[1:n, i]))")
+    println("distância minima dos vertices do grupo $(i) = $(getvalue(minD[i]))")	
+    print("vertices: " )
+    for v = 1:n
+    	if getvalue(x[v,i]) > 0
+	    print("$(v), ");
+	end
+    end
+    print("\n \n");
 end
 
 
