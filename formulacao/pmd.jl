@@ -3,8 +3,8 @@
 using JuMP
 using GLPKMathProgInterface
 
-#filename = "../instancias/300-5-0.75-1"
-filename = "../instancias/300-5-1.00-1"
+filename = "../instancias/300-5-0.75-1"
+#filename = "../instancias/300-5-1.00-1"
 #filename = "teste"
 
 file = open(filename)
@@ -124,9 +124,10 @@ for i = 1:g
 	    print("$(v), ");
 	end
     end
-    print("\n \n");
-    println("Distância mínima encontrada: $(getvalue(minD))");
+    println("\n");
 end
+print("\n \n");
+println("Distância mínima encontrada: $(getvalue(minD))");
 
 
 
