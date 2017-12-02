@@ -3,7 +3,8 @@
 using JuMP
 using GLPKMathProgInterface
 
-filename = "../instancias/300-5-0.75-1"
+#filename = "../instancias/300-5-0.75-1"
+filename = "../instancias/300-5-1.00-1"
 #filename = "teste"
 
 file = open(filename)
@@ -69,22 +70,25 @@ end
 println("calculos de distancias concluidos");
 
 # Modelo e variaveis do problema
-m = Model(solver = GLPKSolverMIP(tm_lim=3600000))
+time = 3600000*3;
+m = Model(solver = GLPKSolverMIP(presolve = true, tm_lim=time))
 
 alpha = 0.05
 
-@variable(m, minD[1:g] >= 0)
-@variable(m, c[1:g], Bin)
+#@variable(m, minD[1:g] >= 0)
+@variable(m, minD >= 0);
+#@variable(m, c[1:g], Bin)
 @variable(m, x[1:n, 1:g], Bin)
 
 # Funcao objetivo
-@objective(m, Max, sum(minD[1:g]))
+#@objective(m, Max, sum(minD[1:g]))
+@objective(m, Max, minD)
 
 # Restricoes
 for v = 1:n
 	for u = v+1:n
         	for i = 1:g
-            	@constraint(m, minD[i] <= da[u,v] + (2-(x[v,i]+x[u,i]))*H)
+            	@constraint(m, minD <= da[v,u] + (2-(x[v,i]+x[u,i]))*H)
 	        end
 	end
 
@@ -93,16 +97,17 @@ end
 
 for k = 1:g
 	@constraints(m, begin
-		minD[k] <= c[k]*H
 		(1-alpha)*M[k] <= sum(x[v,k]*pv[v] for v in 1:n)
         	sum(x[v,k]*pv[v] for v in 1:n) <= (1+alpha)*M[k]
-	        c[k] >= sum(x[v,k] for v in 1:n)/n
-        	c[k] <= sum(x[v,k] for v in 1:n)*1
 		end)
+#		minD[k] <= c[k]*H
+#	        c[k] >= sum(x[v,k] for v in 1:n)/n
+#        	c[k] <= sum(x[v,k] for v in 1:n)*1
+#		end)
 end
 
 println("construcao do modelo concluida");
-#println(m)
+
 
 # Resolver problema
 @time begin
@@ -110,18 +115,17 @@ solve(m)
 end
 
 # Mostrar resultados
-println("");
 for i = 1:g
     println("peso alvo do grupo $(i) = $(M[i])")
-    println("peso total dos vertices do grupo $(i) = $(sum(getvalue(x[v,i])*pv[v] for v in 1:n))")
-    println("distância minima dos vertices do grupo $(i) = $(getvalue(minD[i]))")	
+    println("peso total dos vertices do grupo $(i) = $(sum(getvalue(x[v,i])*pv[v] for v in 1:n))")	
     print("vertices: " )
     for v = 1:n
-    	if getvalue(x[v,i]) > 0
+    	if  !isnan(getvalue(x[v,i])) && getvalue(x[v,i]) > 0
 	    print("$(v), ");
 	end
     end
     print("\n \n");
+    println("Distância mínima encontrada: $(getvalue(minD))");
 end
 
 
