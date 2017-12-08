@@ -3,9 +3,7 @@
 using JuMP
 using GLPKMathProgInterface
 
-filename = "../instancias/300-5-0.75-1"
-#filename = "../instancias/300-5-1.00-1"
-#filename = "teste"
+filename = "../instancias/500-10-0.75-1"
 
 file = open(filename)
 lines = readlines(file);

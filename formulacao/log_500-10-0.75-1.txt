@@ -1,0 +1,48 @@
+leitura do arquivo concluida
+calculos de distancias concluidos
+construcao do modelo concluida
+Warning: basis matrix is ill-conditioned (cond = 4.78e+12)
+13265.500233 seconds (1.75 M allocations: 435.986 MiB)
+peso alvo do grupo 1 = 147285.3746020032
+peso total dos vertices do grupo 1 = NaN
+vertices: 
+
+peso alvo do grupo 2 = 111441.59198111188
+peso total dos vertices do grupo 2 = NaN
+vertices: 
+
+peso alvo do grupo 3 = 102094.90308085713
+peso total dos vertices do grupo 3 = NaN
+vertices: 
+
+peso alvo do grupo 4 = 112952.4152478574
+peso total dos vertices do grupo 4 = NaN
+vertices: 
+
+peso alvo do grupo 5 = 136585.9950018208
+peso total dos vertices do grupo 5 = NaN
+vertices: 
+
+peso alvo do grupo 6 = 138400.1908878967
+peso total dos vertices do grupo 6 = NaN
+vertices: 
+
+peso alvo do grupo 7 = 72567.67665850297
+peso total dos vertices do grupo 7 = NaN
+vertices: 
+
+peso alvo do grupo 8 = 143289.39798575398
+peso total dos vertices do grupo 8 = NaN
+vertices: 
+
+peso alvo do grupo 9 = 142498.75655512785
+peso total dos vertices do grupo 9 = NaN
+vertices: 
+
+peso alvo do grupo 10 = 147526.9953887444
+peso total dos vertices do grupo 10 = NaN
+vertices: 
+
+
+ 
+Distância mínima encontrada: NaN
