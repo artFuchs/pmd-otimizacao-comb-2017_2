@@ -75,7 +75,7 @@ def randomize_solution(percentage, vp, M, a):
         elif len(rcl) > 0:
             s = rcl[0]
 
-        S.assignGroup(i, s)
+        S.assignVertex(i, s)
         groupValue[s] += vp[i]
 
 
