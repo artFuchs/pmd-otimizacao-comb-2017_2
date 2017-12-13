@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from vertex import *
+from operator import attrgetter
 
+
+alpha = 0.05
 
 # readVertex(filepath) - filepath: string
 # Lê um arquivo de instância do pmd e retorna uma lista contendo: uma lista de vértices e uma lista
-# de pesos desejados para cada grupo.
-
+# de grupos
 def readVertex(filename):
     counter = 0
     l = []
@@ -29,11 +31,21 @@ def readVertex(filename):
         lg = []
         for i in range(g):
             s = f.readline()
-            lg.append(int(s))
+            g = Group(i, int(s), alpha)
+            lg.append(g)
         l.append(lg)
     return l
+    
+def readTest(filename):
+	[lv, lg] = readVertex(filename)
+	#teste de ordenação
+	lv = sorted(lv, key=attrgetter('weight'), reverse = True)
+	lg = sorted(lg, key=attrgetter('maxweight'), reverse = True)
+	print(lv)
+	print(lg)
+	
     
 if __name__ == '__main__':
     import sys
     filename = "teste"
-    sys.exit(readVertex(filename))
+    sys.exit(readTest(filename))
