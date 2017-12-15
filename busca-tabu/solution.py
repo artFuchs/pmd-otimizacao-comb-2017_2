@@ -1,6 +1,6 @@
 class Solution:
 
-    def __init__(self, solutionId, numbVertices, numGroups):
+    def __init__(self, solutionId, numberVertices, numGroups):
         self._solutionId = solutionId
         self._groupAssignment = numberVertices * [None]
         self._numVertices = numberVertices
@@ -16,7 +16,7 @@ class Solution:
         return string
 
     def assignVertex(self, vertexNum, groupNum):
-        self._groupAssignment[vertexNumber] = group
+        self._groupAssignment[vertexNum] = groupNum
 
     def desasignGroupAll(self, maxVertexNumber, group):
         for i in range(maxVertexNumber):
@@ -24,7 +24,7 @@ class Solution:
                 self._groupAssignment[i] = None;
 
     def getVertexGroup(self, vertexNumber):
-        return self._groupAssignment;
+        return self._groupAssignment[vertexNumber];
 
     def getGroups(self):
         return range(0, numGroups)
