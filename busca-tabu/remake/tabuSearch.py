@@ -29,14 +29,15 @@ def tabuSearch(problem, initialSolution, maxIterations, tabuListSize):
             solutionValue = problem.getSolutionValue(nextSolution)
 
             if bestSolution == None or solutionValue < bestSolutionValue:
-
                 bestSolution = nextSolution
                 bestSolutionValue = solutionValue
 
 
-        print("Current solution value: " + str(problem.getSolutionValue(nextSolution)))
-        tabooList.addMovement(currentSolution)
         currentSolution = nextSolution
+        print("Iteration " + str(iteration) + ", Current solution value: " + str(problem.getSolutionValue(currentSolution)))
+        printSolutionInfo(problem, currentSolution)
+        tabooList.addMovement(currentSolution)
+
         iteration += 1
 
     print(bestSolutionValue)
@@ -64,6 +65,9 @@ def pickNeighbour(problem, currentSolution, neighbours, tabooList):
                     if not isBestNeighbourFeasible:
                         if bestNeighbour == None or getNumOfFeasibleGroups(problem, neighbour) > getNumOfFeasibleGroups(problem, bestNeighbour):
                             bestNeighbour = neighbour
+                        else:
+                            bestNeighbour = getBestSolution(problem, bestNeighbour, neighbour)
+
 
             # If current solution is feasible:
             else:
@@ -80,6 +84,10 @@ def pickNeighbour(problem, currentSolution, neighbours, tabooList):
             if bestNeighbour == None:
                 bestNeighbour = neighbour
 
+
+        else:
+            print("TABOO NEIGHBOUR")
+
     return bestNeighbour
 
 
@@ -88,16 +96,58 @@ def getNumOfFeasibleGroups(problem, solution):
     num = 0
 
     for groupId in solution.getGroupIds():
-        if problem.getGroupBalance(solution, groupId):
+        if problem.getGroupBalance(solution, groupId) == None:
             num += 1
 
 
     return num
 
+def printSolutionInfo(problem, solution):
+    groupIds = solution.getGroupIds()
+    groups = problem.getGroups()
+
+    for groupId in groupIds:
+        lowerBound = groups[groupId].getTargetWeight() * (1 - problem.getAlpha())
+        upperBound = groups[groupId].getTargetWeight() * (1 + problem.getAlpha())
+        weightString = str(lowerBound) + " <= " + str(problem.calculateGroupWeight(solution, groupId)) + " <= " + str(upperBound)
+        print(str(groups[groupId]) + ", Weight Info: " + weightString + ", Balance: " + str(problem.getGroupBalance(solution, groupId)))
+    print("")
+
+
+def getBestSolution(problem, solution, otherSolution):
+
+    groups = problem.getGroups()
+    groupIds = solution.getGroupIds()
+    solutionGoodGroups = 0
+    otherSolutionGoodGroups = 0
+
+    for groupId in groupIds:
+
+        group = groups[groupId]
+
+        groupWeight = problem.calculateGroupWeight(solution, groupId)
+        otherSolutionGroupWeight = problem.calculateGroupWeight(otherSolution, groupId)
+
+        groupDiff = math.fabs(group.getTargetWeight() - groupWeight)
+        otherGroupDiff = math.fabs(group.getTargetWeight() - otherSolutionGroupWeight)
+
+        if groupDiff <= otherGroupDiff:
+            solutionGoodGroups += 1
+        else:
+            otherSolutionGoodGroups += 1
+
+    if solutionGoodGroups >= otherSolutionGoodGroups:
+        return solution
+    else:
+        return otherSolution
+
+
+
+
 if __name__ == '__main__':
     import sys
 
-    problem = readInstance("300-5-0.75-1")
+    problem = readInstance("500-10-0.75-1")
     initialSolution = Solution(0, {})
 
     groups = problem.getGroups()
@@ -109,6 +159,6 @@ if __name__ == '__main__':
                 initialSolution.assignVertex(vertex.getId(), groups[0].getId())
 
 
-    solution = tabuSearch(problem, initialSolution, 10000, 30)
+    solution = tabuSearch(problem, initialSolution, 10000, 20)
 
     sys.exit()

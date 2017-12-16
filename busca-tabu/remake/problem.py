@@ -28,6 +28,9 @@ class Problem:
     def getGroups(self):
         return self._groups
 
+    def getAlpha(self):
+        return self._alpha
+
     def getSolutionValue(self, solution):
         minDistance = None
 
@@ -88,24 +91,83 @@ class Problem:
 
 
     def getNeighbours(self, solution):
+        numChanges = 5
         neighbours = []
         groupIds = solution.getGroupIds()
 
-        for groupId in groupIds:
-            for otherGroupId in groupIds:
-                if groupId != otherGroupId:
+        for groupIdIndex in range(0, len(groupIds)):
+            for otherGroupIdIndex in range(groupIdIndex + 1, len(groupIds)):
+                groupId = groupIds[groupIdIndex]
+                otherGroupId = groupIds[otherGroupIdIndex]
+                chosenVertices = []
 
-                    groupVertexIds = solution.getGroupVertexIds(groupId)
+                [originGroupId, destGroupId] = self.getOriginAndDest(solution, groupId, otherGroupId)
 
+                vertexMovements = []
+                for i in range(0, numChanges):
+                    vertexId = self.pickVertex(solution, originGroupId, destGroupId, vertexMovements)
+                    if vertexId != None:
+                        vertexMovements.append(vertexId)
 
-                    if len(groupVertexIds) != 0:
-                        vertexId = random.choice(groupVertexIds)
+                for vertexId in vertexMovements:
+                    neighbour = Solution(solution.getId(), solution.getGroupAssignment())
 
-                        neighbour = Solution(solution.getId(), solution.getGroupAssignment())
-                        neighbour.deassignVertex(vertexId, groupId)
-                        neighbour.assignVertex(vertexId, otherGroupId)
+                    neighbour.deassignVertex(vertexId, originGroupId)
+                    neighbour.assignVertex(vertexId, destGroupId)
 
-                        neighbours.append(neighbour)
-
+                    neighbours.append(neighbour)
 
         return neighbours
+
+
+
+
+    def getOriginAndDest(self, solution, groupId, otherGroupId):
+        groupBalance = self.getGroupBalance(solution, groupId)
+        otherGroupBalance = self.getGroupBalance(solution, otherGroupId)
+
+        originGroupId = groupId
+        destGroupId = otherGroupId
+
+        if groupBalance == True and (otherGroupBalance == False or otherGroupBalance == None):
+            originGroupId = groupId
+            destGroupId = otherGroupId
+        elif otherGroupBalance == True and (groupBalance == False or groupBalance == None):
+            originGroupId = otherGroupId
+            destGroupId = groupId
+        else:
+            groups = self.getGroups()
+            group = groups[groupId]
+            otherGroup = groups[otherGroupId]
+
+            groupWeight = self.calculateGroupWeight(solution, groupId)
+            otherGroupWeight = self.calculateGroupWeight(solution, otherGroupId)
+
+            groupDiff = math.fabs(group.getTargetWeight() - groupWeight)
+            otherGroupDiff = math.fabs(otherGroup.getTargetWeight() - otherGroupWeight)
+
+            if groupDiff >= otherGroupDiff:
+                originGroupId = otherGroupId
+                destGroupId = groupId
+            else:
+                originGroupId = groupId
+                destGroupId = otherGroupId
+
+        return [originGroupId, destGroupId]
+
+
+    def pickVertex(self, solution, originGroupId, destGroupId, pickedVertices):
+
+        originVertexIds = solution.getGroupVertexIds(originGroupId)
+
+        if len(originVertexIds) > len(pickedVertices):
+
+            vertexId = random.choice(originVertexIds)
+
+            while vertexId in pickedVertices:
+                vertexId = random.choice(originVertexIds)
+
+            return vertexId
+
+        else:
+            return None

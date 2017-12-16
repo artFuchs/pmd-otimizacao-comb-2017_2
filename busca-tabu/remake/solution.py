@@ -9,6 +9,7 @@ class Solution:
     def __eq__(self, other):
         if other == None:
             return False
+
         return self._groupAssignment == other.getGroupAssignment()
 
     def __repr__(self):
