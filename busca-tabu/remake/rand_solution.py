@@ -4,8 +4,8 @@
 #  rand_solution.py
 
 import math
-import random
-from readInstance import *
+
+
 from problem import *
 from operator import attrgetter
 
@@ -120,11 +120,15 @@ def getMinDist(problem, solution, groupId, vertexId):
 
 
 def teste_randomizar(problem):
-    random.seed(0)
     s = randomize_solution(67, problem)
     print(s)
 
 if __name__ == '__main__':
     import sys
+    import random
+    from readInstance import *
+
+    random.seed(0)
+
     p = readInstance("teste3")
     sys.exit(teste_randomizar(p))

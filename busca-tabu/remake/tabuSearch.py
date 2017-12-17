@@ -1,7 +1,8 @@
 from readInstance import *
 from solution import *
 from tabooList import *
-
+import random
+from rand_solution import *
 
 def tabuSearch(problem, initialSolution, maxIterations, tabuListSize):
 
@@ -28,7 +29,7 @@ def tabuSearch(problem, initialSolution, maxIterations, tabuListSize):
             print("Current solution is feasible.")
             solutionValue = problem.getSolutionValue(nextSolution)
 
-            if bestSolution == None or solutionValue < bestSolutionValue:
+            if bestSolution == None or solutionValue > bestSolutionValue:
                 bestSolution = nextSolution
                 bestSolutionValue = solutionValue
 
@@ -77,7 +78,7 @@ def pickNeighbour(problem, currentSolution, neighbours, tabooList):
                     neighbourValue = problem.getSolutionValue(neighbour)
 
                     # If its value is better than the best value so far, store it.
-                    if bestNeighbour == None or neighbourValue < bestValue:
+                    if bestNeighbour == None or neighbourValue > bestValue:
                         bestNeighbour = neighbour
                         bestValue = neighbourValue
 
@@ -147,18 +148,22 @@ def getBestSolution(problem, solution, otherSolution):
 if __name__ == '__main__':
     import sys
 
-    problem = readInstance("500-10-0.75-1")
+    random.seed(0)
+
+    problem = readInstance("300-5-0.75-1")
+    #problem = readInstance("teste")
     initialSolution = Solution(0, {})
 
-    groups = problem.getGroups()
+    #groups = problem.getGroups()
+	#
+    #for group in groups:
+    #    initialSolution.addGroup(group.getId())
+    #    if group.getId() == 0:
+    #        for vertex in problem.getVertices():
+    #            initialSolution.assignVertex(vertex.getId(), groups[0].getId())
 
-    for group in groups:
-        initialSolution.addGroup(group.getId())
-        if group.getId() == 0:
-            for vertex in problem.getVertices():
-                initialSolution.assignVertex(vertex.getId(), groups[0].getId())
+    initialSolution = randomize_solution(30, problem)
 
-
-    solution = tabuSearch(problem, initialSolution, 10000, 20)
+    solution = tabuSearch(problem, initialSolution, 1000, 100)
 
     sys.exit()
