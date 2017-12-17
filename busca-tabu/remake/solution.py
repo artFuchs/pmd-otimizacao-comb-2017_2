@@ -7,7 +7,7 @@ class Solution:
         self._groupAssignment = copy.deepcopy(groupAssignment)
 
     def __eq__(self, other):
-        if other == None:
+        if type(other) is not Solution:
             return False
 
         return self._groupAssignment == other.getGroupAssignment()
