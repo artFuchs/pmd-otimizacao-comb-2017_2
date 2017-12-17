@@ -142,15 +142,28 @@ def getBestSolution(problem, solution, otherSolution):
     else:
         return otherSolution
 
+def display_help():
+    print(u'Uso: tabuSearch [OPÇÃO] | [ARQUIVO] [NUMERO DE ITERAÇÕES] ([TAMANHO DA LISTA TABU] (OPT)[ALPHA]')
+    print(u'procura soluções para o problema da PARTIÇÃO MAIS DISTANTE utilizando Busca Tabu')
+    print("\n Se ARQUIVO e não for especificado, mostra essa ajuda e finaliza")
+    print("-h, --help: mostra essa ajuda e finaliza")
 
 
-
+#linha de comando: tabuSearch [nome do arquivo] [numero de iterações] [tamanho da lista tabu] (OPT)[alpha]
 if __name__ == '__main__':
     import sys
-
+    
+    if len(sys.argv) < 4 or sys.argv[1] == "-h" or sys.argv[1] == "--help":
+        display_help()
+        sys.exit()
+    
     random.seed(0)
-
-    problem = readInstance("300-5-0.75-1")
+	
+    alpha = 0.05
+    if len(sys.argv) > 4:
+        alpha = sys.argv[4]
+    problem = readInstance(sys.argv[1], alpha)
+    
     #problem = readInstance("teste")
     initialSolution = Solution(0, {})
 
@@ -161,9 +174,9 @@ if __name__ == '__main__':
     #    if group.getId() == 0:
     #        for vertex in problem.getVertices():
     #            initialSolution.assignVertex(vertex.getId(), groups[0].getId())
-
-    initialSolution = randomize_solution(30, problem)
-
-    solution = tabuSearch(problem, initialSolution, 1000, 100)
+    
+    initialSolution = randomize_solution(33, problem)
+    
+    solution = tabuSearch(problem, initialSolution, int(sys.argv[2]), int(sys.argv[3]))
 
     sys.exit()
