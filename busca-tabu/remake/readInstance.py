@@ -2,8 +2,7 @@ from group import *
 from vertex import *
 from problem import *
 
-def readInstance(filename):
-    alpha = 0.05
+def readInstance(filename, alpha):
     vertices = []
     groups = []
 

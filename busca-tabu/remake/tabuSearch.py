@@ -162,7 +162,7 @@ if __name__ == '__main__':
     alpha = 0.05
     if len(sys.argv) > 4:
         alpha = sys.argv[4]
-    problem = readInstance(sys.argv[1], alpha)
+    problem = readInstance(sys.argv[1], float(alpha))
     
     #problem = readInstance("teste")
     initialSolution = Solution(0, {})
