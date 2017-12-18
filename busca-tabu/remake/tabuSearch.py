@@ -13,6 +13,8 @@ def tabuSearch(problem, initialSolution, maxIterations, tabuListSize):
     bestSolution = None
     bestSolutionValue = None
     nextSolution = None
+    if problem.isSolutionFeasible(currentSolution):
+        bestSolutionValue = problem.getSolutionValue(currentSolution)
 
     while iteration < maxIterations:
         neighbours = problem.getNeighbours(currentSolution)
@@ -41,7 +43,7 @@ def tabuSearch(problem, initialSolution, maxIterations, tabuListSize):
 
         iteration += 1
 
-    print(bestSolutionValue)
+    print("best value: " + str(bestSolutionValue))
     return bestSolution
 
 
@@ -143,15 +145,18 @@ def getBestSolution(problem, solution, otherSolution):
         return otherSolution
 
 def display_help():
-    print(u'Uso: tabuSearch [OPÇÃO] | [ARQUIVO] [NUMERO DE ITERAÇÕES] ([TAMANHO DA LISTA TABU] (OPT)[ALPHA]')
+    print(u'Uso: tabuSearch [OPÇÃO] | [ARQUIVO] [NUMERO DE ITERAÇÕES] [TAMANHO DA LISTA TABU] (OPT)[ALPHA]')
     print(u'procura soluções para o problema da PARTIÇÃO MAIS DISTANTE utilizando Busca Tabu')
-    print("\n Se ARQUIVO e não for especificado, mostra essa ajuda e finaliza")
+    print("\n Se ARQUIVO, NUMERO DE ITERAÇÕES e TAMANHO DA LISTA TABU não fore especificados, mostra essa ajuda e finaliza")
     print("-h, --help: mostra essa ajuda e finaliza")
 
 
 #linha de comando: tabuSearch [nome do arquivo] [numero de iterações] [tamanho da lista tabu] (OPT)[alpha]
 if __name__ == '__main__':
     import sys
+    import time
+    
+    start_time = time.time()
     
     if len(sys.argv) < 4 or sys.argv[1] == "-h" or sys.argv[1] == "--help":
         display_help()
@@ -178,5 +183,9 @@ if __name__ == '__main__':
     initialSolution = randomize_solution(33, problem)
     
     solution = tabuSearch(problem, initialSolution, int(sys.argv[2]), int(sys.argv[3]))
-
+	
+	print("initial: " + str(problem.getSolutionValue(initialSolution)))
+    
+    print("------ %s seconds ----------"%(time.time()-start_time))
+	
     sys.exit()
