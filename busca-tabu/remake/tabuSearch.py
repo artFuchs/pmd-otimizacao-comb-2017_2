@@ -184,7 +184,7 @@ if __name__ == '__main__':
     
     solution = tabuSearch(problem, initialSolution, int(sys.argv[2]), int(sys.argv[3]))
 	
-	print("initial: " + str(problem.getSolutionValue(initialSolution)))
+    print("initial: " + str(problem.getSolutionValue(initialSolution)))
     
     print("------ %s seconds ----------"%(time.time()-start_time))
 	
